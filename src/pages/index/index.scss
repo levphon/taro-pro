@@ -1,0 +1,125 @@
+.container {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.tizhiceshi {
+  width: 80%;
+  height: 160rpx;
+  margin: 8% 10%;
+}
+
+.tizhiceshiImg {
+  width: 100%;
+  height: 160rpx;
+}
+
+.content {
+  width: 95%;
+  height: 325rpx;
+  line-height: 40rpx;
+  letter-spacing: 3rpx;
+  margin: auto;
+  overflow: hidden;
+  padding: 10% 0;
+}
+
+.contentText {
+  width: 62.5%;
+  margin-left: 18.5%;
+  color: #fff;
+  font-size: 32rpx;
+  text-align: justify;
+}
+
+.contentTextFoot {
+  width: 60%;
+  line-height: 60rpx;
+  color: #FFD83D;
+  font-size: 28rpx;
+  margin-left: 18.5%;
+  text-align: justify;
+}
+
+.add_btn {
+  width: 80%;
+  height: 103rpx;
+  margin: 0 auto;
+  margin-top: 10%;
+  margin-bottom: 5%;
+  text-align: center;
+}
+
+.ceshiBTN {
+  line-height: 90rpx;
+  color: #fff;
+  font-size: 38rpx;
+  letter-spacing: 2rpx;
+}
+
+.logo {
+  width: 100%;
+  text-align: center;
+  position: absolute;
+  left: 0;
+  bottom: 2%;
+}
+
+.mask {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 100;
+  top: 0;
+  left: 0;
+}
+
+.infoContainer {
+  background-color: white;
+  width: 480rpx;
+  height: 380rpx;
+  border-radius: 10rpx;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto;
+}
+
+.results_btn {
+  text-align: center;
+  width: 376rpx;
+  height: 90rpx;
+  line-height: 90rpx;
+  border: 3rpx solid #6999E4;
+  border-radius: 12rpx;
+  background-color: #fff;
+  margin: 0 auto;
+  margin-bottom: 4%;
+}
+
+.results_btn_text {
+  color: #6999E4;
+  font-size: 38rpx;
+  letter-spacing: 2rpx;
+}
+
+.answerGuide {
+  width: 170rpx;
+  height: 70rpx;
+  line-height: 65rpx;
+  text-align: center;
+  background: #6999e4;
+  border-radius: 35rpx 0 0 35rpx;
+  position: fixed;
+  top: 83.5%;
+  right: 0;
+}
+
+.answerGuideText {
+  font-size: 28rpx;
+  color: #fff;
+}

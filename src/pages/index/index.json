@@ -1,0 +1,6 @@
+{
+    "usingComponents": {
+        "at-toast": "../../npm/taro-ui/dist/weapp/components/toast/index"
+    },
+    "navigationBarTitleText": "体质测试"
+}
