@@ -1,0 +1,262 @@
+.index {
+    width: 100%;
+    height: 100vh;
+    background-size: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.content {
+    width: 90%;
+    height: auto;
+    margin: auto;
+    text-align: justify;
+    background: white;
+    border-radius: 10rpx;
+    border: 1rpx solid #eeeeee;
+    border-bottom: 5rpx solid #628ed3;
+    margin-top: 80rpx;
+    padding-bottom: 30rpx;
+}
+
+.contentText {
+    line-height: 45rpx;
+    color: #333;
+    font-size: 30rpx;
+    padding: 0 25rpx;
+    margin: 30rpx 0 20rpx 0;
+}
+
+.contentTextFoot {
+    height: 40rpx;
+    color: #6999E4;
+    font-size: 28rpx;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.center {
+    margin-bottom: 80rpx;
+}
+
+.centerFirst {
+    width: 90%;
+    height: auto;
+    margin: auto;
+    background: white;
+    border-radius: 10rpx;
+    border: 1rpx solid #eee;
+    border-bottom: 5rpx solid #628ed3;
+    position: relative;
+    margin-top: 80rpx;
+    border-radius: 10px;
+    padding: 0 0 25rpx 0;
+}
+
+.centerFirsts {
+    width: 90%;
+    height: auto;
+    margin: auto;
+    border-radius: 10rpx;
+    position: relative;
+    margin-top: 80rpx;
+    border-radius: 10px;
+}
+
+.centerTextTitle {
+    width: 255rpx;
+    height: 65rpx;
+    line-height: 55rpx;
+    position: absolute;
+    top: -30rpx;
+    left: 31%;
+    z-index: 100;
+    text-align: center;
+    border-radius: 10rpx;
+}
+
+.biaoTitle {
+    color: #fff;
+    font-size: 32rpx;
+}
+
+.centerTextQuestion {
+    height: auto;
+    margin: 55rpx 0 20rpx 0;
+    background: white;
+    border: 1rpx solid #eee;
+    border-bottom: 5rpx solid #6999E4;
+    padding: 50rpx 0 30rpx 0;
+    border-radius: 10rpx;
+}
+
+.centerTextSex {
+    height: auto;
+    margin: 60rpx 0 0 0;
+}
+
+.firstQuestion {
+    display: inline-block;
+    color: #333333;
+    font-size: 32rpx;
+    padding: 0 20rpx 25rpx 20rpx;
+}
+
+.centerTextAnswer {
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+}
+
+.centerTextSexAnswer {
+    padding: 0 12%;
+    height: auto;
+    overflow: hidden;
+}
+
+.centerTextAgeAnswer {
+    height: auto;
+    overflow: hidden;
+}
+
+.answer {
+    width: 100rpx;
+    height: 100rpx;
+    line-height: 100rpx;
+    border: 2rpx solid #628ed3;
+    border-radius: 50rpx;
+    float: left;
+    color: #6999E4;
+    font-size: 32rpx;
+    text-align: center;
+    margin-left: 4%;
+}
+
+.sexAnswer {
+    width: 100rpx;
+    height: 100rpx;
+    line-height: 100rpx;
+    border: 2rpx solid #628ed3;
+    border-radius: 50rpx;
+    float: left;
+    color: #6999E4;
+    font-size: 32rpx;
+    text-align: center;
+    margin-left: 20%;
+}
+
+.ageAnswer {
+    width: 100rpx;
+    height: 100rpx;
+    line-height: 100rpx;
+    border: 2rpx solid #628ed3;
+    border-radius: 50rpx;
+    float: left;
+    color: #6999E4;
+    font-size: 32rpx;
+    text-align: center;
+    margin-left: 4%;
+}
+
+.answerGuide {
+    width: 170rpx;
+    height: 70rpx;
+    line-height: 65rpx;
+    text-align: center;
+    background: #6999e4;
+    border-radius: 35rpx 0 0 35rpx;
+    position: fixed;
+    top: 85%;
+    right: 0;
+}
+
+.answerGuideText {
+    font-size: 28rpx;
+    color: #fff;
+}
+
+.questionAllList {
+    width: 170rpx;
+    height: 70rpx;
+    line-height: 65rpx;
+    text-align: center;
+    background: #6999e4;
+    border-radius: 0 35rpx 35rpx 0;
+    position: fixed;
+    top: 85%;
+    left: 0;
+}
+
+.questionAllListText {
+    font-size: 28rpx;
+    color: #fff;
+}
+
+.proCon {
+    background: #6999e4;
+    width: 100%;
+    height: 40rpx;
+    line-height: 40rpx;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 200;
+}
+
+.proNum {
+    width: 10%;
+    color: #fff;
+    float: left;
+    font-size: 30rpx;
+    text-align: center;
+}
+
+.progress {
+    width: 80%;
+    float: left;
+    margin-top: 15rpx;
+}
+
+.laycontainer {
+    height: auto;
+}
+
+.layView {
+    padding: 30rpx 10rpx;
+    border-bottom: 1rpx solid #eee;
+}
+
+.laycontainer :last-child {
+    border-bottom: none;
+}
+
+.layAnswerTitle {
+    color: #6999E4;
+    font-size: 30rpx;
+}
+
+.layAnswerCon {
+    color: #333333;
+    font-size: 30rpx;
+}
+
+.lookViewAnswer {
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+}
+
+.lookAnswer {
+    width: 80rpx;
+    height: 80rpx;
+    line-height: 80rpx;
+    border: 2rpx solid #628ed3;
+    border-radius: 50rpx;
+    float: left;
+    color: #6999E4;
+    font-size: 32rpx;
+    text-align: center;
+    margin-left: 4%;
+    margin-bottom: 10rpx;
+}

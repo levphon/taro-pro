@@ -3,11 +3,13 @@ import { View, Button, Text } from '@tarojs/components'
 import { connect } from '@tarojs/redux'
 import api from '../../api/index'
 
-import 'taro-ui/dist/style/index.scss'
 import './index.scss'
 
+import bgImg from "../../assets/image/home-bg-fill.png";
 import namedlogo from "../../assets/image/home-logo.png";
 import nametit from "../../assets/image/home-img-tizhi.png";
+// import wor3Img from "../../assets/image/home-img-wor3.png";
+import butStaImg from "../../assets/image/home-but-sta.png";
 
 class Index extends Component {
 
@@ -36,9 +38,7 @@ class Index extends Component {
       errToast: false,
       //错误提示状态
       is_docktor: ""
-    }
-
-    this.isCanGetUserInfo();
+    };
   }
 
   componentWillReceiveProps(nextProps) {
@@ -47,7 +47,7 @@ class Index extends Component {
 
   componentDidMount() {
     var that = this;
-    Taro.login().then(res => {    
+    Taro.login().then(res => {
       var params = { js_code: res.code };
       that.setState({ js_code: res.code });
       api.register(params).then((res) => {
@@ -76,8 +76,29 @@ class Index extends Component {
 
   componentDidHide() { }
 
+  getUserInfo = (userInfo) => {
+    /**
+     * 返回结果有两种
+     * 1.拒绝  errMsg:"getUserInfo:fail auth deny"
+     * 2.接受  errMsg:"getUserInfo:ok"
+     */
+    if (userInfo.detail.errMsg === "getUserInfo:ok") {
+      this.updateUserInfo(userInfo.detail);
+      this.setState({
+        isAuthorization: false
+      });
+    }
+  }
+
+  answerGuide = () => {
+    Taro.navigateTo({
+      url: "/pages/physicalList/physicalList"
+    });
+  }
+
   isCanGetUserInfo() {
-    this.getUserInfo({
+    var that = this;
+    Taro.getUserInfo({
       success: function success(res) {
         that.setState({
           isGet: true
@@ -93,7 +114,6 @@ class Index extends Component {
   }
 
   updateUserInfo(res) {
-    var isGet = this.state.isGet;
     api.udpateWxUserInfo(res.userInfo);
   }
 
@@ -105,64 +125,63 @@ class Index extends Component {
 
   resultsTest() {
     var that = this;
-  }
-
-
-  answerGuide = () => {
-    Taro.navigateTo({
-      url: "/pages/physicalList/physicalList"
+    api.result().then(function (res) {
+      if (res.data.code === 100) {
+        var id = res.data.msg.yusercs_id;
+        Taro.navigateTo({
+          url: "/pages/sharesuccess/sharesuccess?id=" + id
+        });
+      } else {
+        that.setState({
+          errText: "还没有可查看的结果，请先去测试！",
+          errToast: true
+        });
+      }
     });
   }
 
-  getUserInfo = (userInfo) => {
-    /**
-     * 返回结果有两种
-     * 1.拒绝  errMsg:"getUserInfo:fail auth deny"
-     * 2.接受  errMsg:"getUserInfo:ok"
-     */
-    // if (userInfo.detail.errMsg === "getUserInfo:ok") {
-    //   _this.updateUserInfo(userInfo.detail);
-    //   _this.setState({
-    //     isAuthorization: false
-    //   });
-    // }
-  }
-
   onShareAppMessage(res) {
-
+    return {
+      title: "体质测试",
+      path: "pages/index/index",
+      imageUrl: api.imageUrl + "res-img-rep.png",
+      success: function success(res) { }
+    };
   }
 
   render() {
     let answerGuideView = null;
     let authorizationView = null;
     if (this.state.is_docktor === 1) {
-      answerGuideView = <View onClick={this.answerGuide} className="results_btn"><Text class="results_btn_text">体质列表</Text></View>;
+      answerGuideView = <View onClick={this.answerGuide} className='results_btn'><Text className='results_btn_text'>体质列表</Text></View>;
     }
     if (this.state.isAuthorization) {
-      authorizationView = <View className="mask">
-        <View className="infoContainer">
-          <View>欢迎来到体质测试小程序</View>
-          <View>申请获取你的公开信息（昵称、头像等）</View>
-          <Button openType='getUserInfo' onGetUserInfo={this.getUserInfo}>微信授权</Button>
-        </View>
-      </View>;
+      authorizationView =
+        <View className='mask'>
+          <View className='infoContainer'>
+            <View style={{ marginLeft: "10px", marginTop: "20px" }}>欢迎来到体质测试小程序</View>
+            <View>申请获取你的公开信息（昵称、头像等）</View>
+            <Button openType='getUserInfo' onGetUserInfo={this.getUserInfo} style={{ width: "100px", height: "30px", fontSize: "15px", lineHeight: "30px", marginTop: "20px" }}>微信授权</Button>
+          </View>
+        </View>;
     } else {
       authorizationView = <View></View>;
     }
 
     return (
-      <View className="container">
-        <View className="tizhiceshi"><Image class="tizhiceshiImg" src={nametit}></Image></View>
-        <View className="content">
-          <View className="contentText">本测试来自《中医体质分类与判定》国家标准。自2010年上线以来已经服务超过了<Text>30,000,000</Text>人，被医知TV的用户誉为<Text>超准中医体质测试</Text></View>
-          <View className="contentTextFoot">为保证测试精准度，请耐心填写</View>
+      <View className='container' style={{ backgroundImage: `url(${bgImg})`, backgroundSize: "100%" }}>
+        <View className='tizhiceshi'><Image className='tizhiceshiImg' src={nametit}></Image></View>
+        {/* <View className="content" style={{backgroundImage: `url(${wor3Img})`,backgroundSize: "100% 100%",marginTop: "11%"}}> */}
+        <View className='content' style={{ backgroundSize: "100% 100%", marginTop: "11%" }}>
+          <View className='contentText'>本测试来自《中医体质分类与判定》国家标准。自2010年上线以来已经服务超过了<Text style={{ fontWeight: "bold" }}>30,000,000</Text>人，被医知TV的用户誉为<Text style={{ fontWeight: "bold" }}>超准中医体质测试</Text></View>
+          <View className='contentTextFoot' style={{}}>为保证测试精准度，请耐心填写</View>
         </View>
-        <View onClick={this.beginTest} className="add_btn" data-e-tap-so="this"><Text class="ceshiBTN">开始测试</Text></View>
+        <View onClick={this.beginTest} className='add_btn' data-e-tap-so='this' style={{ background: `url(${butStaImg})`, backgroundSize: "100%" }}><Text className='ceshiBTN'>开始测试</Text></View>
         {answerGuideView}
-        <View class="logo"><Image src={namedlogo}></Image></View>
+        <View className='logo'><Image src={namedlogo} style={{ width: "82px", height: "25px" }}></Image></View>
         {authorizationView}
         {/* <at-toast __triggerObserer={_triggerObserer} duration={2000} hasMask={false} isOpened={errToast} text={errText}></at-toast> */}
-      </View >
+      </View>
     )
   }
 }

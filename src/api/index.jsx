@@ -2,6 +2,8 @@ import Taro, { Component } from '@tarojs/taro'
 
 export const baseUrl = "http://localhost:8888";
 export const appid = "wxb947dfc134eadbc4";
+// export const imageUrl = baseUrl+"/weappimages/";
+export const imageUrl = "../../assets/image/";
 
 export default {
 
@@ -44,8 +46,6 @@ export default {
     },
 
 
-
-
     /**
      * 注册账号
      */
@@ -70,7 +70,7 @@ export default {
         var header = this.getHeader(true);
         var np = this.getDebug(params);
         return Taro.request({
-            url: baseUrl + "/api/auth/user/udpateWxUserInfo",
+            url: baseUrl + "/wx/user/" + appid + "/udpateWxUserInfo",
             data: np,
             header: header,
             method: "POST"
