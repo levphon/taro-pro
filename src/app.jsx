@@ -23,10 +23,10 @@ class App extends Component {
     pages: [
       'pages/index/index',
       'pages/question/question',
-      'pages/accessToReport/accessToReport',
-      'pages/report/report',
-      'pages/sharesuccess/sharesuccess',
-      'pages/physicalList/physicalList'
+      // 'pages/accessToReport/accessToReport',
+      // 'pages/report/report',
+      // 'pages/sharesuccess/sharesuccess',
+      // 'pages/physicalList/physicalList'
     ],
     permission: {
       'scope.userLocation': {

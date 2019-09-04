@@ -174,7 +174,7 @@ class Index extends Component {
         {/* <View className="content" style={{backgroundImage: `url(${wor3Img})`,backgroundSize: "100% 100%",marginTop: "11%"}}> */}
         <View className='content' style={{ backgroundSize: "100% 100%", marginTop: "11%" }}>
           <View className='contentText'>本测试来自《中医体质分类与判定》国家标准。自2010年上线以来已经服务超过了<Text style={{ fontWeight: "bold" }}>30,000,000</Text>人，被医知TV的用户誉为<Text style={{ fontWeight: "bold" }}>超准中医体质测试</Text></View>
-          <View className='contentTextFoot' style={{}}>为保证测试精准度，请耐心填写</View>
+          <View className='contentTextFoot'>为保证测试精准度，请耐心填写</View>
         </View>
         <View onClick={this.beginTest} className='add_btn' data-e-tap-so='this' style={{ background: `url(${butStaImg})`, backgroundSize: "100%" }}><Text className='ceshiBTN'>开始测试</Text></View>
         {answerGuideView}
