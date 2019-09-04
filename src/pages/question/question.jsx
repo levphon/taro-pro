@@ -158,8 +158,85 @@ class Question extends Component {
         });
     }
 
-    select = () => {
-
+    select = (item, ktmxid, ktmxfz, e) => {
+        var ktid = item.id;
+        var _this$state2 = _this.state, id = _this$state2.id, fwcsl = _this$state2.fwcsl, fsl = _this$state2.fsl, questionList = _this$state2.questionList, waitList = _this$state2.waitList, finishedlist = _this$state2.finishedlist, isOnClick = _this$state2.isOnClick;
+        // 参数
+        var params = {
+            yusercsmx_id: ktid,
+            yktmx_id: ktmxid,
+            yktmx_fz: ktmxfz
+        };
+        if (!isOnClick) {
+            return;
+        } else {
+            this.setState({
+                isOnClick: false
+            });
+        }
+        api.yktAnswer(params).then(function (res) {
+            // 如果成功开始跳转到下一题
+            var resjson = res.data;
+            var code = resjson.code;
+            // debugger
+            if (code === 50) {
+                // 完全回答正确，需要计数
+                var fwczsl = void 0;
+                // 待答题列表进行过滤
+                var finishedKey = Object.keys(finishedlist);
+                // waitlist.filter( (wait) => finishedKey.indexOf(wait.id+'') >=0 )
+                // 如果是从列表中选择的，而且是已经打过的，下一题的计算需要调整
+                if (finishedKey.indexOf(ktid + "") >= 0) {
+                    // 已经答过题了
+                    // 从待答题列表中删除
+                    fwczsl = fwcsl;
+                    //下一题还是当前待答题的数据
+                    // next = step
+                } else {
+                    // next = step + 1 
+                    finishedlist[ktid] = ktmxid;
+                    finishedKey.push(ktid);
+                    fwczsl = fwcsl + 1;
+                }
+                var waitlist1 = [];
+                waitList.forEach(function (element) {
+                    if (finishedKey.indexOf(element.id) < 0) {
+                        waitlist1.push(element);
+                    }
+                });
+                fwczsl = waitlist1[0].bhid;
+                var percent = fwczsl / fsl * 100;
+                var msg = resjson.msg;
+                this.setState({
+                    fwcsl: fwczsl,
+                    isOpened: false,
+                    waitList: waitlist1,
+                    waitItem: waitlist1[0],
+                    finishedlist: finishedlist,
+                    percent: percent,
+                    questionList: questionList,
+                    errText: msg,
+                    errToast: true,
+                    isOnClick: true
+                });
+            } else if (code === 100) {
+                // 所有考题答完,把id 传递到下一个页面
+                Taro.redirectTo({
+                    url: "/pages/sharesuccess/sharesuccess?id=" + id
+                });
+            } else if (resjson.code === -100) {
+                var _msg = resjson.msg;
+                this.setState({
+                    errText: _msg,
+                    errToast: true
+                });
+            }
+        }).catch(function (error) {
+            this.setState({
+                errText: "服务器异常，请稍后重试",
+                errToast: true
+            });
+        });
     }
 
     jumpQuestion = (index) => {
@@ -173,7 +250,10 @@ class Question extends Component {
     }
 
     questionAllList = () => {
-
+        this.setState({
+            show: true,
+            errToast: false
+        });
     }
 
     answerGuide = () => {
@@ -265,7 +345,7 @@ class Question extends Component {
                     </View>
                 </View>
 
-                <View onClick="questionAllList" className="questionAllList" show={sex!==''&&age!==''}>
+                <View onClick={this.questionAllList} className="questionAllList" show={sex!==''&&age!==''}>
                     <Text className="questionAllListText">查看题目</Text>
                 </View>
                 <AtFloatLayout __fn_onClose={true} __triggerObserer="{{_triggerObserer}}" onClose={this.onClose} data-e-onclose-so="this" isOpened={show} title="查看题目">
