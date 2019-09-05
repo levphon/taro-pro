@@ -29,7 +29,7 @@ class Index extends Component {
       province: "",
       nickname: "",
       gender: "",
-      isAuthorization: false,
+      isAuthorization: true,
       isGet: false,
       js_code: "",
       jsData: {},
@@ -51,14 +51,14 @@ class Index extends Component {
       var params = { js_code: res.code };
       that.setState({ js_code: res.code });
       api.register(params).then((res) => {
-        if (res.data.code === 100) {
-          var token = res.data.data.token;
-          Taro.setStorageSync("token", token);
+        if (res.data.code === 0) {
+          var token = res.data.data.sessionKey;
           that.setState({
             jsData: res,
-            is_docktor: result.data.data.is_docktor
+            //is_docktor: result.data.data.is_docktor
           });
           that.isCanGetUserInfo();
+          Taro.setStorageSync("token", token);
         }
       });
     }).catch(err => {
@@ -69,8 +69,6 @@ class Index extends Component {
       })
     });
   }
-
-  componentWillUnmount() { }
 
   componentDidShow() { }
 
@@ -85,7 +83,7 @@ class Index extends Component {
     if (userInfo.detail.errMsg === "getUserInfo:ok") {
       this.updateUserInfo(userInfo.detail);
       this.setState({
-        isAuthorization: false
+        isAuthorization: true
       });
     }
   }
@@ -98,19 +96,29 @@ class Index extends Component {
 
   isCanGetUserInfo() {
     var that = this;
-    Taro.getUserInfo({
-      success: function success(res) {
+    try {
+      const value = Taro.getStorageSync('token');
+      if (value) {
         that.setState({
-          isGet: true
-        });
-        that.updateUserInfo(res);
-      },
-      fail: function fail(res) {
-        that.setState({
+          isGet: true,
           isAuthorization: true
         });
+      } else{
+        Taro.getUserInfo({
+          success: function success(res) {
+            that.setState({isGet: true});
+            that.updateUserInfo(res);
+          },
+          fail: function fail(res) {
+            that.setState({
+              isAuthorization: false
+            });
+          }
+        });
       }
-    });
+    } catch (e) {
+      // Do something when catch error
+    }
   }
 
   updateUserInfo(res) {
@@ -126,7 +134,7 @@ class Index extends Component {
   resultsTest() {
     var that = this;
     api.result().then(function (res) {
-      if (res.data.code === 100) {
+      if (res.data.code === 0) {
         var id = res.data.msg.yusercs_id;
         Taro.navigateTo({
           url: "/pages/sharesuccess/sharesuccess?id=" + id
@@ -150,24 +158,6 @@ class Index extends Component {
   }
 
   render() {
-    let answerGuideView = null;
-    let authorizationView = null;
-    if (this.state.is_docktor === 1) {
-      answerGuideView = <View onClick={this.answerGuide} className='results_btn'><Text className='results_btn_text'>体质列表</Text></View>;
-    }
-    if (this.state.isAuthorization) {
-      authorizationView =
-        <View className='mask'>
-          <View className='infoContainer'>
-            <View style={{ marginLeft: "10px", marginTop: "20px" }}>欢迎来到体质测试小程序</View>
-            <View>申请获取你的公开信息（昵称、头像等）</View>
-            <Button openType='getUserInfo' onGetUserInfo={this.getUserInfo} style={{ width: "100px", height: "30px", fontSize: "15px", lineHeight: "30px", marginTop: "20px" }}>微信授权</Button>
-          </View>
-        </View>;
-    } else {
-      authorizationView = <View></View>;
-    }
-
     return (
       <View className='container' style={{ backgroundImage: `url(${bgImg})`, backgroundSize: "100%" }}>
         <View className='tizhiceshi'><Image className='tizhiceshiImg' src={nametit}></Image></View>
@@ -177,10 +167,17 @@ class Index extends Component {
           <View className='contentTextFoot'>为保证测试精准度，请耐心填写</View>
         </View>
         <View onClick={this.beginTest} className='add_btn' data-e-tap-so='this' style={{ background: `url(${butStaImg})`, backgroundSize: "100%" }}><Text className='ceshiBTN'>开始测试</Text></View>
-        {answerGuideView}
+        <View onClick={this.answerGuide} className='results_btn' hidden={this.state.is_docktor!== 1}><Text className='results_btn_text'>体质列表</Text></View>
         <View className='logo'><Image src={namedlogo} style={{ width: "82px", height: "25px" }}></Image></View>
-        {authorizationView}
-        {/* <at-toast __triggerObserer={_triggerObserer} duration={2000} hasMask={false} isOpened={errToast} text={errText}></at-toast> */}
+
+        <View className='mask' hidden={this.state.isAuthorization}>
+          <View className='infoContainer'>
+            <View style={{ marginLeft: "10px", marginTop: "20px" }}>欢迎来到体质测试小程序</View>
+            <View>申请获取你的公开信息（昵称、头像等）</View>
+            <Button openType='getUserInfo' onGetUserInfo={this.getUserInfo} style={{ width: "100px", height: "30px", fontSize: "15px", lineHeight: "30px", marginTop: "20px" }}>微信授权</Button>
+          </View>
+        </View>
+        <AtToast __triggerObserer="{_triggerObserer}" duration={2000} hasMask={false} isOpened={this.state.errToast} text={this.state.errText}></AtToast>
       </View>
     )
   }

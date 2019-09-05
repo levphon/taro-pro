@@ -41,7 +41,28 @@ class App extends Component {
     }
   }
 
-  componentDidMount() { }
+  componentDidMount() {
+    // Taro.getSetting()
+    //   .then(res => {
+    //     if (res.authSetting["scope.userInfo"]) {
+    //       return true;
+    //     } else {
+    //       throw new Error('没有授权')
+    //     }
+    //   })
+    //   .then(res => {
+    //     return Taro.getUserInfo();
+    //   })
+    //   .then(res => {
+    //     Taro.setStorage({
+    //       key: 'userInfo',
+    //       data: res.userInfo
+    //     })
+    //   })
+    //   .catch(err => {
+    //     console.log(err)
+    //   })
+  }
 
   componentDidShow() { }
 

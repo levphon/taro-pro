@@ -83,7 +83,7 @@ export default {
     ykt(params) {
         var header = this.getHeader(true);
         return Taro.request({
-            url: baseUrl + "/api/auth/ycs",
+            url: baseUrl + "/question/search",
             data: params,
             header: header
         });
