@@ -51,7 +51,7 @@ class Index extends Component {
       var params = { js_code: res.code };
       that.setState({ js_code: res.code });
       api.register(params).then((res) => {
-        if (res.data.code === 0) {
+        if (res.data.code === 200) {
           var token = res.data.data.sessionKey;
           that.setState({
             jsData: res,
@@ -134,7 +134,7 @@ class Index extends Component {
   resultsTest() {
     var that = this;
     api.result().then(function (res) {
-      if (res.data.code === 0) {
+      if (res.data.code === 200) {
         var id = res.data.msg.yusercs_id;
         Taro.navigateTo({
           url: "/pages/sharesuccess/sharesuccess?id=" + id

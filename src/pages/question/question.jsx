@@ -72,7 +72,6 @@ class Question extends Component {
         }
 
         Taro.showLoading({ title: "加载中" });
-
         var params = {
             gender: sex,
             age: age,
@@ -82,26 +81,31 @@ class Question extends Component {
         api.ykt(params).then(function (res) {
             Taro.hideLoading();
             var resjson = res.data;
-            if (resjson.code === 0) {
+            if (resjson.code === 200) {
                 // 这个需要再最后回答完成后，跳转到下一个页面传递用
                 var fwcsl = that.state.pageNum || 0;
                 var fsl = resjson.total || 100;
+                var percent = fwcsl / fsl * 100;
 
                 var datalist = resjson.rows;
                 var id = datalist[0].id;
                 // 放待代替数据
                 var alllist = datalist.slice(0);
                 // 放所有数据
-                var percent = fwcsl / fsl * 100;
                 // 过滤数据，只展示未回答的数据列表
                 var waitList = [];
                 var finishedlist = {};
                 if (datalist) {
-                    if (fwcsl > 0) {
-                        datalist.forEach(element => {
+                    datalist.map(function (element, index) {
+                        element.bhid = index;
+                        element.fda = 0;
+                        if (element.fda === 0) {
                             waitList.push(element);
-                        });
-                    }
+                        } else {
+                            finishedlist[element.id] = element.fda;
+                            // 完成数据记录
+                        }
+                    });
                 }
                 that.setState({
                     id: id,
@@ -110,7 +114,8 @@ class Question extends Component {
                     waitItem: waitList[0],
                     finishedlist: finishedlist,
                     fsl: fsl,
-                    fwcsl: waitList[0].id,
+                    fwcsl: fwcsl,
+                    // fwcsl: waitList[0].bhid,
                     percent: percent
                 });
             }
@@ -124,14 +129,22 @@ class Question extends Component {
         });
     }
 
-    select = (item, ktmxid, ktmxfz) => {
-        var ktid = item.id;
-        var _this$state2 = this.state, id = _this$state2.id, fwcsl = _this$state2.fwcsl, fsl = _this$state2.fsl, questionList = _this$state2.questionList, waitList = _this$state2.waitList, finishedlist = _this$state2.finishedlist, isOnClick = _this$state2.isOnClick;
+    select = (item, optionId) => {
+        var questionId = item.id;
+        var that = this;
+        var _this$state2 = this.state, 
+        id = _this$state2.id, 
+        fwcsl = _this$state2.fwcsl, 
+        fsl = _this$state2.fsl, 
+        pageNum = _this$state2.pageNum,
+        questionList = _this$state2.questionList, 
+        waitList = _this$state2.waitList, 
+        finishedlist = _this$state2.finishedlist, 
+        isOnClick = _this$state2.isOnClick;
         // 参数
         var params = {
-            yusercsmx_id: ktid,
-            yktmx_id: ktmxid,
-            yktmx_fz: ktmxfz
+            qId: item.id,
+            qoIds: [optionId]
         };
         if (!isOnClick) {
             return;
@@ -145,14 +158,14 @@ class Question extends Component {
             var resjson = res.data;
             var code = resjson.code;
             // debugger
-            if (code === 50) {
+            if (code === 200) {
                 // 完全回答正确，需要计数
                 var fwczsl = void 0;
                 // 待答题列表进行过滤
                 var finishedKey = Object.keys(finishedlist);
                 // waitlist.filter( (wait) => finishedKey.indexOf(wait.id+'') >=0 )
                 // 如果是从列表中选择的，而且是已经打过的，下一题的计算需要调整
-                if (finishedKey.indexOf(ktid + "") >= 0) {
+                if (finishedKey.indexOf(questionId + "") >= 0) {
                     // 已经答过题了
                     // 从待答题列表中删除
                     fwczsl = fwcsl;
@@ -160,26 +173,32 @@ class Question extends Component {
                     // next = step
                 } else {
                     // next = step + 1 
-                    finishedlist[ktid] = ktmxid;
-                    finishedKey.push(ktid);
+                    finishedlist[questionId] = optionId;
+                    finishedKey.push(questionId);
                     fwczsl = fwcsl + 1;
                 }
-                var waitlist1 = [];
+                console.log(fwczsl);
+                console.log(finishedKey);
+
+                that.questionNext(fwczsl);
+
+                var waitItems = [];
                 waitList.forEach(function (element) {
                     if (finishedKey.indexOf(element.id) < 0) {
-                        waitlist1.push(element);
+                        waitItems.push(element);
                     }
                 });
-                fwczsl = waitlist1[0].bhid;
+                // fwczsl = waitItems[0].bhid;
                 var percent = fwczsl / fsl * 100;
                 var msg = resjson.msg;
-                this.setState({
+                that.setState({
                     fwcsl: fwczsl,
                     isOpened: false,
-                    waitList: waitlist1,
-                    waitItem: waitlist1[0],
+                    waitList: waitItems,
+                    waitItem: waitItems[0],
                     finishedlist: finishedlist,
                     percent: percent,
+                    pageNum: pageNum + 1,
                     questionList: questionList,
                     errText: msg,
                     errToast: true,
@@ -192,14 +211,66 @@ class Question extends Component {
                 });
             } else if (resjson.code === -100) {
                 var _msg = resjson.msg;
-                this.setState({
+                that.setState({
                     errText: _msg,
                     errToast: true
                 });
             }
         }).catch(function (error) {
             console.error(error);
-            this.setState({
+            that.setState({
+                errText: "服务器异常，请稍后重试",
+                errToast: true
+            });
+        });
+    }
+
+    questionNext(pageNum) {
+        var that = this;
+        var finishedlist = that.state.finishedlist;
+        Taro.showLoading({ title: "加载中" });
+        var params = {
+            gender: that.state.sex,
+            age: that.state.age,
+            pageNum: pageNum,
+            pageSize: that.state.pageSize
+        };
+        api.ykt(params).then(function (res) {
+            Taro.hideLoading();
+            var resjson = res.data;
+            if (resjson.code === 200) {
+                // 这个需要再最后回答完成后，跳转到下一个页面传递用
+                var fwcsl = pageNum || 0;
+                var fsl = resjson.total || 100;
+
+                var datalist = resjson.rows;
+                var id = datalist[0].id;
+                // 放待代替数据
+                var alllist = datalist.slice(0);
+                // 放所有数据
+                var percent = fwcsl / fsl * 100;
+                // 过滤数据，只展示未回答的数据列表
+                var waitList = [];
+                if (datalist) {
+                    datalist.forEach(element => {
+                        waitList.push(element);
+                    });
+                }
+                that.setState({
+                    id: id,
+                    questionList: alllist,
+                    waitList: waitList,
+                    waitItem: waitList[0],
+                    finishedlist: finishedlist,
+                    fsl: fsl,
+                    // fwcsl: waitList[0].id,
+                    percent: percent
+                });
+            }
+        }).catch(function (error) {
+            console.error(error);
+            Taro.hideLoading();
+            that.setState({
                 errText: "服务器异常，请稍后重试",
                 errToast: true
             });
@@ -250,6 +321,7 @@ class Question extends Component {
             backgroundColor: "#fff",
             color: "#6999E4"
         };
+        const { percent } = this.state;
         const { sex } = this.state;
         const { age } = this.state;
         const { fwcsl } = this.state;
@@ -257,11 +329,16 @@ class Question extends Component {
         const { waitItem } = this.state;
         const { show } = this.state;
         const { isOpened } = this.state;
+        const { sexList } = this.state;
+        const { ageList } = this.state;
+        const { waitList } = this.state;
+        const { questionList } = this.state;
+        const { finishedlist } = this.state; 
         return (
             <View className="index" style={{ backgroundImage: `url(${bgImg})`, backgroundSize: "100%" }}>
                 <View className="proCon" hidden={sex === '' || age === ''}>
                     <Text className="proNum">{fwcsl == 0 ? 1 : fwcsl}</Text>
-                    <AtProgress __triggerObserer="{triggerObserer}" className="progress" color="#00ff00" isHidePercent={true} percent={Number(this.state.percent)} sttus="progress"></AtProgress>
+                    <AtProgress __triggerObserer="{triggerObserer}" className="progress" color="#00ff00" isHidePercent={true} percent={Number(percent)} sttus="progress"></AtProgress>
                     <Text className="proNum">{fsl}</Text>
                 </View>
                 <View className="content">
@@ -279,25 +356,25 @@ class Question extends Component {
                                 <Text className="firstQuestion">请问您的性别是？</Text>
                             </View>
                             <View className="centerTextAnswer">
-                                {this.state.sexList.map((item, index) => {
-                                    return (<Text onClick={this.sexList.bind(this, item.value)} className="answer" key={index} data-e-tap-a-a={item.sex} data-e-tap-so={this} style={sex === item.value ? currentStyleY : currentStyleN}>{item.value}</Text>)
+                                {sexList.map((item, index) => {
+                                    return (<Text onClick={this.sexList.bind(this, item.value)} className="answer" key={item.sex} data-e-tap-a-a={item.sex} data-e-tap-so={this} style={sex === item.value ? currentStyleY : currentStyleN}>{item.value}</Text>)
                                 })}
                             </View>
                             <View className="centerTextSex">
                                 <Text className="firstQuestion">请问您的年龄是？</Text>
                             </View>
                             <View className="centerTextAnswer">
-                                {this.state.ageList.map((item, index) => {
-                                    return (<Text onClick={this.ageList.bind(this, item.value)} className="answer" key={index} data-e-tap-a-a={item.age} data-e-tap-so={this} style={age === item.value ? currentStyleY : currentStyleN}>{item.value}</Text>)
+                                {ageList.map((item, index) => {
+                                    return (<Text onClick={this.ageList.bind(this, item.value)} className="answer" key={item.age} data-e-tap-a-a={item.age} data-e-tap-so={this} style={age === item.value ? currentStyleY : currentStyleN}>{item.value}</Text>)
                                 })}
                             </View>
                         </View>
                     </View>
                     <View className="centerFirsts" hidden={waitItem == null}>
                         <View hidden={waitItem.question == ''}>
-                            {this.state.waitList.map((items, indexs) => {
+                            {waitList.map((items, indexs) => {
                                 return (
-                                    <View key={indexs}>
+                                    <View key={items.id}>
                                         <View className="centerTextTitle" style={{ backgroundImage: `url(${ansImg})`, backgroundSize: "100%" }}>
                                             <Text className="biaoTitle">第{fwcsl + 1}题</Text>
                                         </View>
@@ -305,7 +382,8 @@ class Question extends Component {
                                             <Text className="firstQuestion">{items.question}</Text><Text className="firstQuestion" hidden={items.remark === ''}>({items.remark})</Text>
                                             <View className="centerTextAnswer" hidden={!items.options}>
                                                 {items.options.map((itemss, indexss) => {
-                                                    return (<Text onClick={this.select.bind(this, waitItem, itemss.id, itemss.score)} className="answer" data-e-tap-a-a={waitItem} data-e-tap-a-b={itemss.id} data-e-tap-a-c={itemss.question_id} data-e-tap-so={this} style={this.state.finishedlist[waitItem.id] === itemss.question_id ? currentStyleY : currentStyleN} key={indexss}>{itemss.option}</Text>)
+                                                    return (<Text onClick={this.select.bind(this, waitItem, itemss.id)} className="answer" data-e-tap-a-a={waitItem} data-e-tap-a-b={itemss.id} data-e-tap-a-c={itemss.question_id} data-e-tap-so={this} key={indexss}>{itemss.option}</Text>)
+                                                    // style={finishedlist[waitItem.id] === itemss.question_id ? currentStyleY : currentStyleN}
                                                 })}
                                             </View>
                                         </View>
@@ -320,8 +398,8 @@ class Question extends Component {
                 </View>
                 <AtFloatLayout __fn_onClose={true} __triggerObserer="{{_triggerObserer}}" onClose={this.onClose} data-e-onclose-so="this" isOpened={show} title="查看题目">
                     <View className="lookViewAnswer">
-                        {this.state.questionList.map((item, index) => {
-                            return (<Text onClick={this.jumpQuestion} className="lookAnswer" key={index} data-e-tap-a-a={index} data-e-tap-so="this" style={Object.keys(this.state.finishedlist).indexOf(item.id + "") >= 0 ? currentStyleY : currentStyleN}>{index + 1}</Text>)
+                        {questionList.map((item, index) => {
+                            return (<Text onClick={this.jumpQuestion} className="lookAnswer" key={index} data-e-tap-a-a={index} data-e-tap-so="this" style={Object.keys(finishedlist).indexOf(item.id + "") >= 0 ? currentStyleY : currentStyleN}>{index + 1}</Text>)
                         })}
                     </View>
                 </AtFloatLayout>

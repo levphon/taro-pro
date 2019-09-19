@@ -1,5 +1,6 @@
 import Taro, { Component } from '@tarojs/taro'
 
+// export const baseUrl = "http://www.payu.xyz:8888";
 export const baseUrl = "http://localhost:8888";
 export const appid = "wxb947dfc134eadbc4";
 // export const imageUrl = baseUrl+"/weappimages/";
@@ -12,9 +13,7 @@ export default {
        */
     getHeader() {
         var isToken = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-        var header = {
-            "content-type": "application/json"
-        };
+        var header = {"content-type": "application/json"};
         if (isToken) {
             var token = this.getToken();
             if (token) {
@@ -93,9 +92,10 @@ export default {
     yktAnswer(params) {
         var header = this.getHeader(true);
         return Taro.request({
-            url: baseUrl + "/api/auth/ycs/answer",
+            url: baseUrl + "/question/answer",
             data: params,
-            header: header
+            header: header,
+            method: "POST"
         });
     },
 
