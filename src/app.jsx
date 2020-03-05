@@ -1,12 +1,14 @@
-import '@tarojs/async-await'
-import Taro, { Component } from '@tarojs/taro'
-import { Provider } from '@tarojs/redux'
+// import '@tarojs/async-await'
+import 'taro-ui/dist/style/index.scss'
+
+import Taro, {Component} from '@tarojs/taro'
+import {Provider} from '@tarojs/redux'
 
 import Index from './pages/index'
 
 import configStore from './store'
 
-import 'taro-ui/dist/style/index.scss'
+
 import './app.scss'
 
 // 如果需要在 h5 环境中开启 React Devtools
@@ -15,7 +17,7 @@ import './app.scss'
 //   require('nerv-devtools')
 // }
 
-const store = configStore()
+const store = configStore();
 
 class App extends Component {
 
@@ -25,7 +27,7 @@ class App extends Component {
       'pages/question/question',
       // 'pages/accessToReport/accessToReport',
       // 'pages/report/report',
-      // 'pages/sharesuccess/sharesuccess',
+      'pages/sharesuccess/sharesuccess',
       // 'pages/physicalList/physicalList'
     ],
     permission: {
@@ -39,7 +41,7 @@ class App extends Component {
       navigationBarTitleText: 'WeChat',
       navigationBarTextStyle: 'black'
     }
-  }
+  };
 
   componentDidMount() {
     // Taro.getSetting()
@@ -64,11 +66,14 @@ class App extends Component {
     //   })
   }
 
-  componentDidShow() { }
+  componentDidShow() {
+  }
 
-  componentDidHide() { }
+  componentDidHide() {
+  }
 
-  componentDidCatchError() { }
+  componentDidCatchError() {
+  }
 
   // 在 App 类中的 render() 函数没有实际作用
   // 请勿修改此函数
@@ -81,4 +86,4 @@ class App extends Component {
   }
 }
 
-Taro.render(<App />, document.getElementById('app'))
+Taro.render(<App />, document.getElementById('app'));

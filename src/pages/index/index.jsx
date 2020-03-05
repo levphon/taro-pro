@@ -15,12 +15,12 @@ class Index extends Component {
 
   config = {
     navigationBarTitleText: '体质测试'
-  }
+  };
 
-  static defaultProps = {}
+  static defaultProps = {};
 
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       name: "",
@@ -46,13 +46,14 @@ class Index extends Component {
   }
 
   componentDidMount() {
-    var that = this;
+    let that = this;
     Taro.login().then(res => {
-      var params = { js_code: res.code };
+      let params = { js_code: res.code };
       that.setState({ js_code: res.code });
+
       api.register(params).then((res) => {
         if (res.data.code === 200) {
-          var token = res.data.data.sessionKey;
+          let token = res.data.data.sessionKey;
           that.setState({
             jsData: res,
             //is_docktor: result.data.data.is_docktor
@@ -86,13 +87,13 @@ class Index extends Component {
         isAuthorization: true
       });
     }
-  }
+  };
 
   answerGuide = () => {
     Taro.navigateTo({
       url: "/pages/physicalList/physicalList"
     });
-  }
+  };
 
   isCanGetUserInfo() {
     var that = this;
